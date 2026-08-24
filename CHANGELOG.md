@@ -1,5 +1,31 @@
 # CHANGELOG · MathematicsWeb
 
+## Unreleased · Phase 0 知识图谱工具链
+
+**配套 `md_to_json.py` 的查询 CLI,补齐 Phase 0 写读闭环。**
+
+### 新增
+
+- `tools/graph_query.py`
+  - 7 个子命令:`list` / `get <id>` / `category <name>` / `tag <name>` / `search <keyword>` / `stats` / `paths`
+  - 读 `docs/knowledge_graph.json`(schema_version=1),无第三方依赖
+  - category / tag 大小写不敏感;search 走 title + 章节 + 子节标题
+  - 找不到结果 exit=0(便于管道),参数错误 exit=2
+- `tools/README.md` 新增第 2 节(用法表 + 约定),并在变更记录里追加 2026-08-25 一行
+
+### 改动
+
+- `项目开发计划.md` · Phase 0 checkbox「写图谱查询 CLI」勾选 + 补 2026-08-25 完成说明
+
+### 验证
+
+- `list` → 10 节点(01-10)全部列出,字符数 2,603 ~ 3,399
+- `stats` → 节点 10 / 章节 56 / 子节 133 / 总字符 30,873(与 `md_to_json.py` 输出对齐)
+- `tag 数学史` → 命中 3 节点(01 数学起源与演变 / 04 数学故事与传说 / 06 数学大师与学者)
+- `search 欧几里得` → 命中 1 节点(01 数学起源与演变 / 欧几里得与《几何原本》)
+- `get 01_数学起源与演变` → 完整 JSON 输出(中文字段不转义)
+- `get 不存在_id` → 友好提示,exit=0
+
 ## v0.6.3 · 2026-08-21 · 完整 9 大行星
 
 **行星轨道从 6 颗扩到完整 9 颗(水/金/地/火/木/土/天王/海王/冥王)+ 月球绕地球**

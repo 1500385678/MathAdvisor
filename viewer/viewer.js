@@ -196,10 +196,135 @@ export const SCENES = [
     description: '2 层 NN(2 → 8 → 2)做 2D 分类。反向传播 + SGD,看决策边界如何学出来。',
     loader: () => import('./scenes/20_neural-net.js'),
   },
+  // v0.6.22: 几何类 10 场景首批 3 个
+  {
+    id: 'voronoi',
+    title: '沃罗诺伊图',
+    domain: '数学 × 计算几何',
+    icon: '🗺️',
+    renderer: '2D',
+    description: '把画布按"最近种子"切成 N 个区域,下半屏画 Voronoi 对偶 Delaunay 三角剖分。最近邻查询、地图分区。',
+    loader: () => import('./scenes/21_voronoi.js'),
+  },
+  {
+    id: 'delaunay',
+    title: '德劳内三角剖分',
+    domain: '数学 × 计算几何',
+    icon: '🔺',
+    renderer: '2D',
+    description: '散点切成最胖的三角(最大化最小角)。空圆性质可视化。拖动点重新剖分。地形建模、有限元。',
+    loader: () => import('./scenes/22_delaunay.js'),
+  },
+  {
+    id: 'ellipse-reflection',
+    title: '椭圆光学反射',
+    domain: '数学 × 物理',
+    icon: '🔭',
+    renderer: '2D',
+    description: '椭圆 x²/a² + y²/b² = 1,从一焦点发光反射后必过另一焦点。天文望远镜、回声室、碎石术。',
+    loader: () => import('./scenes/23_ellipse-reflection.js'),
+  },
+  // v0.6.23: 几何类 10 场景第二批 3 个
+  {
+    id: 'lemniscate',
+    title: '双纽线',
+    domain: '数学 × 计算几何',
+    icon: '∞',
+    renderer: '2D',
+    description: '伯努利 1694 年发现的 8 字形:r² = a²·cos(2θ)。电偶极子等势线同形,调 a 看 8 字胖瘦。',
+    loader: () => import('./scenes/24_lemniscate.js'),
+  },
+  {
+    id: 'buffon-needle',
+    title: '布丰投针',
+    domain: '数学 × 几何概率',
+    icon: '🪡',
+    renderer: '2D',
+    description: '蒙特卡洛祖师爷:平行线 + 随机投针,统计穿线次数 → π ≈ 2LN/(k·d)。投得越多越准。',
+    loader: () => import('./scenes/25_buffon-needle.js'),
+  },
+  {
+    id: 'koch-snowflake',
+    title: 'Koch 雪花',
+    domain: '数学 × 分形几何',
+    icon: '❄️',
+    renderer: '2D',
+    description: '等边三角形每边三等分中段改凸起,N 步后周长 → 无穷大,面积收敛。分数维 log4/log3≈1.26。',
+    loader: () => import('./scenes/26_koch-snowflake.js'),
+  },
+  // v0.6.24: 几何类 10 场景第三批 3 个
+  {
+    id: 'sierpinski',
+    title: '谢尔宾斯基三角',
+    domain: '数学 × 分形几何',
+    icon: '🔺',
+    renderer: '2D',
+    description: 'Sierpiński 1915:确定性挖中间 + 混沌游戏,两种构造结果一致。分数维 log3/log2≈1.585。',
+    loader: () => import('./scenes/27_sierpinski.js'),
+  },
+  {
+    id: 'great-circle',
+    title: '球面大圆',
+    domain: '数学 × 球面几何',
+    icon: '🌍',
+    renderer: '2D',
+    description: 'haversine 算球面距离 + 10 城市大圆航线 vs 恒向线对比。跨洋航班走大圆省 5-15%。',
+    loader: () => import('./scenes/28_great-circle.js'),
+  },
+  {
+    id: 'mobius-strip',
+    title: '莫比乌斯带',
+    domain: '数学 × 拓扑几何',
+    icon: '🌀',
+    renderer: '3D',
+    description: 'Möbius 1858 单面环。3D 参数曲面 + 蚂蚁走 u∈[0,4π] 才回原面 — 演示非可定向。',
+    loader: () => import('./scenes/29_mobius-strip.js'),
+  },
+  // v0.6.25: 几何类 10 场景收尾 1 个
+  {
+    id: 'crystal-lattice',
+    title: '晶体格 / Bravais',
+    domain: '数学 × 材料科学',
+    icon: '💎',
+    renderer: '3D',
+    description: '4 种 Bravais 晶系(SC/BCC/FCC/HCP)对比。配位数 6→8→12,APF 0.52→0.74,调 r 看原子接触转变。',
+    loader: () => import('./scenes/30_crystal-lattice.js'),
+  },
+  // v0.6.36: 初中几何场景集(MATH-016 第 1 弹)· 人教版 7 年级
+  {
+    id: 'triangle-congruence',
+    title: '三角形全等判定',
+    domain: '数学 · 初中几何',
+    icon: '🔺',
+    renderer: '2D',
+    description: '5 种判定法 SSS / SAS / ASA / AAS / HL(直角)。两个 3-4-5 直角三角形,按判定法高亮对应元素。',
+    loader: () => import('./scenes/31_triangle-congruence.js'),
+  },
 ];
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ---------- v0.6.35 WebGL feature detection ----------
+// 3D 场景依赖 three.js → WebGL;在低 GPU / 旧浏览器 / 软件渲染 / Headless 旧版里可能失败。
+// 提前检测,失败时渲染降级卡片,避免 silent 报错或黑屏。
+let _webglAvailable = null;
+function checkWebGL() {
+  if (_webglAvailable !== null) return _webglAvailable;
+  // v0.6.35:支持 ?forcewebglfail=1 URL 参数(测试 / 截图 / 教学演示)
+  if (typeof location !== 'undefined' && new URLSearchParams(location.search).get('forcewebglfail') === '1') {
+    _webglAvailable = false;
+    return false;
+  }
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl');
+    _webglAvailable = !!gl;
+  } catch (_) {
+    _webglAvailable = false;
+  }
+  return _webglAvailable;
 }
 
 export function initViewer(container, config = {}) {
@@ -371,8 +496,69 @@ export function initViewer(container, config = {}) {
     });
     statusBar.querySelector('[data-scene-name]').textContent = scene.title + ' · ' + scene.domain;
 
+    // v0.6.35:3D 场景 WebGL 不可用时渲染降级卡片(场景信息 + 教学要点 + 浏览器升级建议)
+    async function renderWebGLFallback(scene) {
+      let lessonText = '';
+      let formulaText = '';
+      // 尝试创建 instance 拿 getLesson/getFormula。WebGL 真不可用时 factory 可能 throw,
+      // 用临时 host 隔离 + try-catch 吃掉,避免污染降级卡片。
+      try {
+        const mod = await scene.loader();
+        const factory = mod.default || mod.createScene || mod.initScene;
+        if (typeof factory === 'function') {
+          const tmpHost = document.createElement('div');
+          const tmpInstance = factory(tmpHost, { aiPanel });
+          if (tmpInstance) {
+            try { lessonText = tmpInstance.getLesson ? tmpInstance.getLesson() : ''; } catch (_) {}
+            try { formulaText = tmpInstance.getFormula ? tmpInstance.getFormula() : ''; } catch (_) {}
+            try { tmpInstance.destroy && tmpInstance.destroy(); } catch (_) {}
+          }
+        }
+      } catch (_) {
+        // factory 内部 three.js init 失败被 catch(可能 console.error),不影响降级
+      }
+      const ua = navigator.userAgent || '未知浏览器';
+      canvasHost.innerHTML = `
+        <div class="mathw-webgl-fallback">
+          <div class="mathw-webgl-fallback-icon">${scene.icon || '🎲'}</div>
+          <h2>${escapeHtml(scene.title)}</h2>
+          <p class="mathw-domain">${escapeHtml(scene.domain)} · 3D</p>
+          <p class="mathw-desc">${escapeHtml(scene.description)}</p>
+          <div class="mathw-webgl-fallback-warn">
+            <strong>⚠️ 当前环境不支持 WebGL</strong>
+            <p>3D 场景需要浏览器开启硬件加速。请用现代浏览器访问:</p>
+            <ul>
+              <li>Chrome 88+ / Edge 88+ / Firefox 85+ / Safari 15+</li>
+            </ul>
+            <p class="mathw-ua">UA: ${escapeHtml(ua)}</p>
+          </div>
+          ${formulaText ? `<div class="mathw-webgl-fallback-formula"><h3>∑ 核心公式</h3><pre>${escapeHtml(formulaText)}</pre></div>` : ''}
+          ${lessonText ? `<div class="mathw-webgl-fallback-lesson"><h3>📚 教学要点</h3><pre>${escapeHtml(lessonText)}</pre></div>` : ''}
+        </div>
+      `;
+      return { lessonText, formulaText };
+    }
+
     // 加载新场景
     try {
+      // v0.6.35:3D 场景先 WebGL feature detection,不可用则降级
+      if (scene.renderer === '3D' && !checkWebGL()) {
+        const { lessonText, formulaText } = await renderWebGLFallback(scene);
+        const fallbackInstance = {
+          sceneId,
+          getLesson: () => lessonText,
+          getFormula: () => formulaText,
+          destroy: () => { canvasHost.innerHTML = ''; },
+        };
+        currentScene = fallbackInstance;
+        currentSceneId = sceneId;
+        if (ws) ws.markVisited(sceneId);
+        if (ws) ws.setLastScene(sceneId);
+        aiPanel.setActiveScene(scene, fallbackInstance);
+        aiPanel.appendSystem(`⚠️「${scene.title}」WebGL 不可用,显示降级卡片(AI 仍可对话)`);
+        cfg.callbacks.onSceneChange && cfg.callbacks.onSceneChange(sceneId);
+        return;
+      }
       const mod = await scene.loader();
       const factory = mod.default || mod.createScene || mod.initScene;
       if (typeof factory !== 'function') {

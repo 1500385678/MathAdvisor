@@ -3,3 +3,7 @@
 node_modules/
 .venv/
 __pycache__/
+# 例外: .Log/ 是项目能力文档目录(v0.6.34 规则),其中 YYYY-MM-DD.md 必须入库
+# 注意: macOS git 大小写不敏感, *.log 会误伤 .Log/*.md
+!.Log/
+!.Log/*.md

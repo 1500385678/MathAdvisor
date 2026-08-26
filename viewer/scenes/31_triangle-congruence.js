@@ -1,18 +1,97 @@
 // viewer/scenes/31_triangle-congruence.js
-// MathematicsWeb v0.6.36 — 三角形全等判定(人教版 7 年级 · MATH-016 第 1 弹)
-// 2D Canvas:画 2 个三角形 ΔABC 和 ΔA'B'C',按 5 种判定法分别高亮对应边/角,
-// 验证对应元素相等 ⇒ 两三角形全等 (ΔABC ≅ ΔA'B'C')
+// MathematicsWeb v0.6.36 — 三角形全等判定 (数学 × 初中几何 · 7 年级)
+// 2D Canvas 场景:左右两个三角形 ABC / DEF,5 种判定法高亮对应边/角,拖动控制点验证
+//   - SSS (边边边):3 条边分别相等
+//   - SAS (边角边):两边 + 夹角相等
+//   - ASA (角边角):两角 + 夹边相等
+//   - AAS (角角边):两角 + 一对对应边相等
+//   - HL  (斜边直角边):直角三角形专用
 //
-// 判定法:
-//   SSS 三边对应相等
-//   SAS 两边及其夹角对应相等
-//   ASA 两角及其夹边对应相等
-//   AAS 两角及其中一角的对边对应相等
-//   HL  斜边与一直角边对应相等(只限直角三角形)
+// 数学(全等判定定理):
+//   SSS  ΔABC ≅ ΔDEF  if |AB|=|DE| ∧ |BC|=|EF| ∧ |CA|=|FD|
+//   SAS  ΔABC ≅ ΔDEF  if |AB|=|DE| ∧ ∠A=∠D ∧ |AC|=|DF|     (角是夹角)
+//   ASA  ΔABC ≅ ΔDEF  if ∠A=∠D ∧ |AB|=|DE| ∧ ∠B=∠E         (边是夹边)
+//   AAS  ΔABC ≅ ΔDEF  if ∠A=∠D ∧ ∠B=∠E ∧ |AB|=|DE|         (非夹边)
+//   HL   ΔABC ≅ ΔDEF  if ∠C=∠F=90° ∧ |AB|=|DE| ∧ |AC|=|DF|  (斜边 + 一条直角边)
 //
-// 应用:建筑工程结构校验 · 测绘定位 · 装配尺寸链
+// 应用:
+//   - 工程测量:钢架结构件检验
+//   - 测绘:三角网控制点坐标
+//   - 物理:力的合成与分解(平行四边形法则)
+//   - 航测:三角形定位(类 GPS 三角测距)
 
 import { makeLoop, fitCanvas } from '../../kernel/02_animation.js';
+
+// ---------- 几何工具 ----------
+
+// 2 点距离
+function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+
+// 顶点 C 处的内角(以 A→C→B 角)
+function angleAt(c, a, b) {
+  const v1x = a.x - c.x, v1y = a.y - c.y;
+  const v2x = b.x - c.x, v2y = b.y - c.y;
+  const dot = v1x * v2x + v1y * v2y;
+  const cos = dot / (Math.hypot(v1x, v1y) * Math.hypot(v2x, v2y) + 1e-9);
+  return Math.acos(Math.max(-1, Math.min(1, cos)));
+}
+
+// 全等判定检查(根据 criterion 返回 { pass, msg, highlights:{sides,angles} })
+function checkCongruence(t1, t2, criterion) {
+  // t1 = [A, B, C], t2 = [D, E, F];对应关系 A↔D, B↔E, C↔F
+  const sides1 = [dist(t1[0], t1[1]), dist(t1[1], t1[2]), dist(t1[2], t1[0])];
+  const sides2 = [dist(t2[0], t2[1]), dist(t2[1], t2[2]), dist(t2[2], t2[0])];
+  const angs1 = [angleAt(t1[0], t1[1], t1[2]), angleAt(t1[1], t1[0], t1[2]), angleAt(t1[2], t1[0], t1[1])];
+  const angs2 = [angleAt(t2[0], t2[1], t2[2]), angleAt(t2[1], t2[0], t2[2]), angleAt(t2[2], t2[0], t2[1])];
+  const TOL_S = 6;   // 边长容差(px)
+  const TOL_A = 0.05; // 角度容差(rad, ≈3°)
+
+  // sides1 = [AB, BC, CA], sides2 = [DE, EF, FD]
+  // angs1  = [∠A,  ∠B, ∠C],  angs2  = [∠D,  ∠E, ∠F]
+
+  switch (criterion) {
+    case 'SSS': {
+      const sOK = sides1.every((s, i) => Math.abs(s - sides2[i]) < TOL_S);
+      return { pass: sOK, msg: '3 条边分别相等', sides: [0, 1, 2], angles: [] };
+    }
+    case 'SAS': {
+      // 边 AB, AC + 角 A
+      const sAB = Math.abs(sides1[0] - sides2[0]) < TOL_S;
+      const sAC = Math.abs(sides1[2] - sides2[2]) < TOL_S;
+      const aA = Math.abs(angs1[0] - angs2[0]) < TOL_A;
+      return { pass: sAB && sAC && aA, msg: '两边 + 夹角 (AB=DE, ∠A=∠D, AC=DF)', sides: [0, 2], angles: [0] };
+    }
+    case 'ASA': {
+      // 角 A, 角 B + 边 AB
+      const aA = Math.abs(angs1[0] - angs2[0]) < TOL_A;
+      const aB = Math.abs(angs1[1] - angs2[1]) < TOL_A;
+      const sAB = Math.abs(sides1[0] - sides2[0]) < TOL_S;
+      return { pass: aA && aB && sAB, msg: '两角 + 夹边 (∠A=∠D, AB=DE, ∠B=∠E)', sides: [0], angles: [0, 1] };
+    }
+    case 'AAS': {
+      // 角 A, 角 B + 边 BC
+      const aA = Math.abs(angs1[0] - angs2[0]) < TOL_A;
+      const aB = Math.abs(angs1[1] - angs2[1]) < TOL_A;
+      const sBC = Math.abs(sides1[1] - sides2[1]) < TOL_S;
+      return { pass: aA && aB && sBC, msg: '两角 + 一对应边 (∠A=∠D, ∠B=∠E, BC=EF)', sides: [1], angles: [0, 1] };
+    }
+    case 'HL': {
+      // 直角 C/F + 斜边 AB/DE + 直角边 AC/DF
+      const isRight1 = Math.abs(angs1[2] - Math.PI / 2) < TOL_A;
+      const isRight2 = Math.abs(angs2[2] - Math.PI / 2) < TOL_A;
+      const sHyp = Math.abs(sides1[0] - sides2[0]) < TOL_S;
+      const sLeg = Math.abs(sides1[2] - sides2[2]) < TOL_S;
+      const rightOK = isRight1 && isRight2;
+      return {
+        pass: rightOK && sHyp && sLeg,
+        msg: '斜边 + 直角边 (∠C=∠F=90°, AB=DE, AC=DF)',
+        sides: [0, 2], angles: [2],
+        requireRight: true,
+      };
+    }
+  }
+  return { pass: false, msg: '', sides: [], angles: [] };
+}
 
 export function createScene(host, opts = {}) {
   // ---------- DOM ----------
@@ -28,14 +107,21 @@ export function createScene(host, opts = {}) {
   lesson.className = 'mathw-lesson';
   lesson.innerHTML = `
     <button class="mathw-lesson-toggle" data-toggle>−</button>
-    <div class="mathw-lesson-title">数学 · 三角形全等判定</div>
+    <div class="mathw-lesson-title">数学 × 初中几何 · 三角形全等判定</div>
     <div class="mathw-lesson-content">
-      <div class="mathw-lesson-headline">ΔABC ≅ ΔA'B'C' · 5 种判定法</div>
-      <div class="mathw-lesson-formula">SSS | SAS | ASA | AAS | HL(直角)</div>
+      <div class="mathw-lesson-headline">5 种判定法 · 拖动右侧顶点验证</div>
+      <div class="mathw-lesson-formula">SSS · SAS · ASA · AAS · HL(直角三角形专用)</div>
       <div class="mathw-lesson-text">
-        两个三角形若有 <strong>3 组对应元素相等</strong>(且判定法有效),则它们<strong>全等</strong>。
-        切记 <span style="color:#f87171">SSA / ASS</span> 不是判定法(歧义情形)。
-        切换按钮看每种判定法高亮哪 3 组元素。
+        <strong>三角形全等</strong>(ΔABC ≅ ΔDEF) = 经旋转/平移/翻转后能完全重合。<br>
+        <strong>5 种判定法</strong>(只要满足任一,两三角形必全等):<br>
+        <strong>SSS</strong>(边边边):3 条边分别相等。<br>
+        <strong>SAS</strong>(边角边):<strong>两边 + 夹角</strong>相等 — 角必须是夹角。<br>
+        <strong>ASA</strong>(角边角):<strong>两角 + 夹边</strong>相等 — 边必须是夹边。<br>
+        <strong>AAS</strong>(角角边):两角 + 一对对应边相等 — 边不要求是夹边。<br>
+        <strong>HL</strong>(斜边直角边):<strong>直角三角形专用</strong>,斜边 + 一条直角边相等。<br>
+        <strong>注意</strong>:SSA(边边角,角非夹角)<strong>不</strong>保证全等(反例:钝角 / 锐角歧义)。<br>
+        选判定法,拖右侧 DEF 顶点,使对应边/角匹配,看到 ✓ 即全等。<br>
+        应用:工程测量 · 测绘 · 力的分解 · 航测三角定位。
       </div>
     </div>
   `;
@@ -46,229 +132,175 @@ export function createScene(host, opts = {}) {
   });
 
   const ctrls = document.createElement('div');
+  ctrls.className = 'mathw-controls';
   ctrls.innerHTML = `
-    <div class="mathw-controls-title">判定法 · 5 选 1</div>
+    <div class="mathw-controls-title">参数 · 三角形全等</div>
     <div class="mathw-control-row">
-      <button data-method="SSS" style="flex:1;margin:2px;padding:6px;font-size:12px">SSS</button>
-      <button data-method="SAS" style="flex:1;margin:2px;padding:6px;font-size:12px">SAS</button>
-      <button data-method="ASA" style="flex:1;margin:2px;padding:6px;font-size:12px">ASA</button>
-      <button data-method="AAS" style="flex:1;margin:2px;padding:6px;font-size:12px">AAS</button>
-      <button data-method="HL"  style="flex:1;margin:2px;padding:6px;font-size:12px">HL</button>
+      <span class="mathw-control-label">判定法</span>
+      <select data-crit>
+        <option value="SSS" selected>SSS (边边边)</option>
+        <option value="SAS">SAS (边角边)</option>
+        <option value="ASA">ASA (角边角)</option>
+        <option value="AAS">AAS (角角边)</option>
+        <option value="HL">HL  (斜边直角边)</option>
+      </select>
+    </div>
+    <div class="mathw-control-row">
+      <span class="mathw-control-label">左侧 ABC</span>
+      <button data-rand1>🎲 随机</button>
+      <button data-rst1>↺ 重置</button>
+    </div>
+    <div class="mathw-control-row">
+      <span class="mathw-control-label">右侧 DEF</span>
+      <button data-rand2>🎲 随机</button>
+      <button data-cp>📋 复制 ABC → DEF</button>
     </div>
     <div class="mathw-control-row" style="font-size:11px;color:var(--mathw-muted)">
-      当前: <span data-cur-method style="color:#fbbf24">SSS</span>
+      拖右侧 DEF 顶点调形状(左侧 ABC 固定 / 随机后固定)
     </div>
-    <div class="mathw-control-row" data-explainer style="font-size:11px;color:#a3a3a3;line-height:1.5"></div>
   `;
-  ctrls.className = 'mathw-controls';
   host.appendChild(ctrls);
 
   // ---------- 状态 ----------
-  let method = 'SSS';
+  // 左侧 ABC 固定(基准), 右侧 DEF 可拖动
+  let tri1 = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }]; // 初始化在 resize 时设
+  let tri2 = [{ x: 0, y: 0 }, { x: 0, y: 0 }, { x: 0, y: 0 }];
+  let params = { crit: 'SSS' };
+  // 拖动状态
+  let drag = null; // { idx: 0|1|2 }   ← DEF 的 D/E/F
 
-  // 两个固定三角形(画在画布左右半边),元素值设计成"全等"以便高亮对比
-  // ΔABC (左):边 AB=3, BC=4, CA=5(默认 3-4-5 直角);A=(0,0) B=(3,0) C=(3,4)
-  // ΔA'B'C' (右):旋转 + 平移,保证 A'B'=3, B'C'=4, C'A'=5
-  const tri1 = {
-    name: 'ABC',
-    pts: [{ x: 0, y: 0, label: 'A' }, { x: 3, y: 0, label: 'B' }, { x: 3, y: 4, label: 'C' }],
-  };
-  // 右侧三角形:绕中心旋转 30° 再平移
-  const tri2Base = [{ x: 0, y: 0 }, { x: 3, y: 0 }, { x: 3, y: 4 }];
-  const ang = Math.PI / 6;  // 30°
-  const tri2 = {
-    name: "A'B'C'",
-    pts: tri2Base.map(p => ({
-      x: p.x * Math.cos(ang) - p.y * Math.sin(ang),
-      y: p.x * Math.sin(ang) + p.y * Math.cos(ang),
-      label: '',
-    })),
-  };
-  // 补 label
-  tri2.pts[0].label = "A'";
-  tri2.pts[1].label = "B'";
-  tri2.pts[2].label = "C'";
-
-  // 边长与角:全等的两三角形,边相等、角相等
-  const sides1 = [
-    { from: 0, to: 1, name: 'AB', length: 3 },
-    { from: 1, to: 2, name: 'BC', length: 4 },
-    { from: 2, to: 0, name: 'CA', length: 5 },
-  ];
-  const sides2 = [
-    { from: 0, to: 1, name: "A'B'", length: 3 },
-    { from: 1, to: 2, name: "B'C'", length: 4 },
-    { from: 2, to: 0, name: "C'A'", length: 5 },
-  ];
-  // 角:对位角 A↔A', B↔B', C↔C'(顶点索引 0,1,2)
-  // A = 36.87°(arctan(3/4)), B = 53.13°(arctan(4/3)), C = 90°
-  const angDeg = [Math.atan2(4, 3) * 180 / Math.PI, Math.atan2(3, 4) * 180 / Math.PI, 90];
-
-  // 各判定法对应"哪 3 组元素"
-  // 注:角用顶点索引;边用 sides 数组的索引
-  const METHODS = {
-    SSS: {
-      sides: [0, 1, 2],  // AB, BC, CA(全 3 边)
-      angles: [],        // 不用角
-      desc: '三边对应相等(SSS) — 最基本的判定,无需角信息。',
-    },
-    SAS: {
-      sides: [0, 1],      // AB, BC(夹角 B 的两边)
-      angles: [1],        // ∠B(夹角)
-      desc: '两边及其夹角对应相等(SAS) — 角必须在两边的中间。',
-    },
-    ASA: {
-      sides: [1],         // BC(两角夹的边)
-      angles: [0, 2],     // ∠A, ∠C(夹边)
-      desc: '两角及其夹边对应相等(ASA) — 边必须在两角的中间。',
-    },
-    AAS: {
-      sides: [1],         // BC(任一已知角的对边)
-      angles: [0, 2],     // ∠A, ∠C
-      desc: '两角及其中一角的对边对应相等(AAS) — 边只需对着任一角。',
-    },
-    HL:  {
-      sides: [1, 2],      // 斜边 CA + 直角边 BC
-      angles: [2],        // ∠C = 90°
-      desc: '斜边 + 一直角边(HL) — 仅限直角三角形(这里 C=90°)。',
-    },
-  };
+  function initTriangles(W, H) {
+    const cxL = W * 0.25, cxR = W * 0.75, cy = H * 0.5;
+    // 左侧:3-4-5 直角三角
+    tri1 = [
+      { x: cxL - 80, y: cy + 60 },  // A 左下
+      { x: cxL + 80, y: cy + 60 },  // B 右下
+      { x: cxL - 80, y: cy - 60 },  // C 左上  ∠A=90°
+    ];
+    // 右侧:稍错开(不重合)
+    tri2 = [
+      { x: cxR - 90, y: cy + 50 },
+      { x: cxR + 70, y: cy + 50 },
+      { x: cxR - 90, y: cy - 70 },
+    ];
+  }
 
   // ---------- 渲染 ----------
   const ctx = canvas.getContext('2d');
 
-  function drawSegment(p1, p2, color, lw) {
-    ctx.strokeStyle = color;
-    ctx.lineWidth = lw;
-    ctx.beginPath();
-    ctx.moveTo(p1.x, p1.y);
-    ctx.lineTo(p2.x, p2.y);
-    ctx.stroke();
+  // 画单个三角形
+  function drawTri(t, labels, sideColor, angColor, highlightSides, highlightAngs, requireRight) {
+    ctx.lineWidth = 2;
+    // 边:先画非高亮(暗),再画高亮(亮)
+    for (let i = 0; i < 3; i++) {
+      const a = t[i], b = t[(i + 1) % 3];
+      ctx.strokeStyle = highlightSides && highlightSides.has(i) ? sideColor : '#2a3140';
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+    // 顶点
+    for (let i = 0; i < 3; i++) {
+      ctx.fillStyle = '#e6e8ec';
+      ctx.beginPath();
+      ctx.arc(t[i].x, t[i].y, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#e6e8ec';
+      ctx.font = 'bold 13px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(labels[i], t[i].x, t[i].y - 12);
+    }
+    // 边长标签
+    ctx.font = '11px monospace';
+    ctx.textAlign = 'center';
+    for (let i = 0; i < 3; i++) {
+      const a = t[i], b = t[(i + 1) % 3];
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const d = dist(a, b);
+      const color = highlightSides && highlightSides.has(i) ? sideColor : '#8a93a6';
+      ctx.fillStyle = color;
+      // 偏移避免压线
+      const nx = -(b.y - a.y) / (d + 1e-6) * 12;
+      const ny = (b.x - a.x) / (d + 1e-6) * 12;
+      ctx.fillText(d.toFixed(0), mx + nx, my + ny);
+    }
+    // 角度弧(在角顶点处画弧 + 数字)
+    ctx.font = '10px -apple-system, sans-serif';
+    for (let i = 0; i < 3; i++) {
+      const a = t[(i + 2) % 3], c = t[i], b = t[(i + 1) % 3];
+      const a1 = Math.atan2(a.y - c.y, a.x - c.x);
+      const a2 = Math.atan2(b.y - c.y, b.x - c.x);
+      let dA = a2 - a1;
+      while (dA < 0) dA += Math.PI * 2;
+      const ang = dA;
+      const r = 18;
+      ctx.strokeStyle = highlightAngs && highlightAngs.has(i) ? angColor : 'rgba(138,147,166,0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, r, a1, a2);
+      ctx.stroke();
+      ctx.fillStyle = highlightAngs && highlightAngs.has(i) ? angColor : '#8a93a6';
+      const midA = a1 + ang / 2;
+      ctx.fillText((ang * 180 / Math.PI).toFixed(0) + '°', c.x + (r + 8) * Math.cos(midA), c.y + (r + 8) * Math.sin(midA));
+      // HL 判定时,∠C=90° 用红色方块标记
+      if (requireRight && Math.abs(ang - Math.PI / 2) < 0.05) {
+        ctx.strokeStyle = angColor;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(c.x + 8, c.y - 8, 8, 8);
+      }
+    }
   }
 
-  function draw(elapsed, dt) {
+  // 标题
+  function drawLabel(W, H, info) {
+    ctx.fillStyle = '#e6e8ec';
+    ctx.font = 'bold 14px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(info.pass ? '✓ 全等 ΔABC ≅ ΔDEF' : `✗ ${info.msg}`, W / 2, 28);
+    ctx.fillStyle = '#8a93a6';
+    ctx.font = '11px -apple-system, sans-serif';
+    ctx.fillText(`当前判定法: ${params.crit}  ·  ${info.pass ? '满足条件' : '调整 DEF 使对应边/角匹配'}`, W / 2, 46);
+  }
+
+  function draw() {
     const { w, h, dpr } = fitCanvas(canvas, host);
     const W = w, H = h;
+    if (tri1[0].x === 0 && tri1[0].y === 0) initTriangles(W, H);
+
     ctx.save();
     ctx.scale(dpr, dpr);
     ctx.fillStyle = '#0e1116';
     ctx.fillRect(0, 0, W, H);
 
-    // 两个三角形的"画布坐标":先 scale + 平移到画布内
-    const scale = Math.min(W, H) * 0.13;  // 边 3~5 在画布占 39~65px
-    const cx1 = W * 0.28, cy1 = H * 0.58;
-    const cx2 = W * 0.72, cy2 = H * 0.58;
-    const t1 = tri1.pts.map(p => ({ x: cx1 + p.x * scale, y: cy1 - p.y * scale, label: p.label }));
-    const t2 = tri2.pts.map(p => ({ x: cx2 + p.x * scale, y: cy2 - p.y * scale, label: p.label }));
-
-    // 网格底纹(浅)
-    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    // 中线分割
+    ctx.strokeStyle = '#1c2230';
     ctx.lineWidth = 1;
-    for (let i = 0; i < W; i += 40) {
-      ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, H); ctx.stroke();
-    }
-    for (let j = 0; j < H; j += 40) {
-      ctx.beginPath(); ctx.moveTo(0, j); ctx.lineTo(W, j); ctx.stroke();
-    }
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(W / 2, 60);
+    ctx.lineTo(W / 2, H - 20);
+    ctx.stroke();
+    ctx.setLineDash([]);
 
-    const cur = METHODS[method];
-
-    // ---- 三角形 1(左)----
-    // 默认画所有边(暗灰)
-    sides1.forEach((s, i) => {
-      const hi = cur.sides.includes(i);
-      drawSegment(t1[s.from], t1[s.to], hi ? '#fbbf24' : '#4ea1ff', hi ? 4 : 2);
-    });
-    // 角弧:用顶角处的弧
-    for (let v = 0; v < 3; v++) {
-      const prev = t1[(v + 2) % 3], cur_ = t1[v], next = t1[(v + 1) % 3];
-      const a1 = Math.atan2(prev.y - cur_.y, prev.x - cur_.x);
-      const a2 = Math.atan2(next.y - cur_.y, next.x - cur_.x);
-      const hi = cur.angles.includes(v);
-      ctx.strokeStyle = hi ? '#f59e0b' : '#94a3b8';
-      ctx.lineWidth = hi ? 3 : 1.5;
-      ctx.beginPath();
-      // 取顺时针方向的较小弧
-      let aS = a1, aE = a2;
-      while (aE < aS) aE += Math.PI * 2;
-      if (aE - aS > Math.PI) { aS = a2; aE = a1; while (aE < aS) aE += Math.PI * 2; }
-      ctx.arc(cur_.x, cur_.y, 22, aS, aE);
-      ctx.stroke();
-      // 顶点标签
-      ctx.fillStyle = '#e6e8ec';
-      ctx.font = 'bold 14px -apple-system, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(t1[v].label, cur_.x - 14, cur_.y - 12);
-    }
-    // 边长标签
-    sides1.forEach((s, i) => {
-      const mx = (t1[s.from].x + t1[s.to].x) / 2;
-      const my = (t1[s.from].y + t1[s.to].y) / 2;
-      const hi = cur.sides.includes(i);
-      ctx.fillStyle = hi ? '#fbbf24' : '#a3a3a3';
-      ctx.font = hi ? 'bold 13px -apple-system, sans-serif' : '12px -apple-system, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${s.name}=${s.length}`, mx, my - 6);
-    });
-
-    // ---- 三角形 2(右)----
-    sides2.forEach((s, i) => {
-      const hi = cur.sides.includes(i);
-      drawSegment(t2[s.from], t2[s.to], hi ? '#fbbf24' : '#34d399', hi ? 4 : 2);
-    });
-    for (let v = 0; v < 3; v++) {
-      const prev = t2[(v + 2) % 3], cur_ = t2[v], next = t2[(v + 1) % 3];
-      const a1 = Math.atan2(prev.y - cur_.y, prev.x - cur_.x);
-      const a2 = Math.atan2(next.y - cur_.y, next.x - cur_.x);
-      const hi = cur.angles.includes(v);
-      ctx.strokeStyle = hi ? '#f59e0b' : '#94a3b8';
-      ctx.lineWidth = hi ? 3 : 1.5;
-      ctx.beginPath();
-      let aS = a1, aE = a2;
-      while (aE < aS) aE += Math.PI * 2;
-      if (aE - aS > Math.PI) { aS = a2; aE = a1; while (aE < aS) aE += Math.PI * 2; }
-      ctx.arc(cur_.x, cur_.y, 22, aS, aE);
-      ctx.stroke();
-      ctx.fillStyle = '#e6e8ec';
-      ctx.font = 'bold 14px -apple-system, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(t2[v].label, cur_.x + 14, cur_.y - 12);
-    }
-    sides2.forEach((s, i) => {
-      const mx = (t2[s.from].x + t2[s.to].x) / 2;
-      const my = (t2[s.from].y + t2[s.to].y) / 2;
-      const hi = cur.sides.includes(i);
-      ctx.fillStyle = hi ? '#fbbf24' : '#a3a3a3';
-      ctx.font = hi ? 'bold 13px -apple-system, sans-serif' : '12px -apple-system, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(`${s.name}=${s.length}`, mx, my - 6);
-    });
-
-    // 顶角度数(只在 highlight 时显示)
-    cur.angles.forEach(v => {
-      [t1, t2].forEach((tri, idx) => {
-        const p = tri[v];
-        ctx.fillStyle = '#fbbf24';
-        ctx.font = 'bold 13px -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText(`${angDeg[v].toFixed(1)}°`, p.x, p.y + 30);
-      });
-    });
-
-    // 标题
-    ctx.fillStyle = '#e6e8ec';
-    ctx.font = 'bold 16px -apple-system, sans-serif';
+    // 区域标签
+    ctx.fillStyle = '#8a93a6';
+    ctx.font = '11px -apple-system, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(`三角形全等判定 · ${method}`, W / 2, 28);
-    ctx.font = '12px -apple-system, sans-serif';
-    ctx.fillStyle = '#a3a3a3';
-    ctx.fillText(`ΔABC ≅ ΔA'B'C' · 高亮 = 判定法所需对应元素`, W / 2, 48);
+    ctx.fillText('ABC · 基准三角形(固定)', W / 4, H - 8);
+    ctx.fillText('DEF · 拖动顶点调形状', (3 * W) / 4, H - 8);
 
-    // 全等勾
-    ctx.fillStyle = '#34d399';
-    ctx.font = 'bold 24px -apple-system, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('≅', W / 2, H * 0.45);
+    // 全等检查
+    const info = checkCongruence(tri1, tri2, params.crit);
+    const hSide = info.pass || info.sides.length > 0 ? new Set(info.sides) : null;
+    const hAng = info.pass || info.angles.length > 0 ? new Set(info.angles) : null;
+
+    // 左侧 ABC
+    drawTri(tri1, ['A', 'B', 'C'], '#6ee7b7', '#4ea1ff', hSide, hAng, info.requireRight);
+    // 右侧 DEF
+    drawTri(tri2, ['D', 'E', 'F'], '#fbbf24', '#f472b6', hSide, hAng, info.requireRight);
+
+    drawLabel(W, H, info);
 
     ctx.restore();
   }
@@ -276,35 +308,72 @@ export function createScene(host, opts = {}) {
   const loop = makeLoop(draw, { maxFps: 30 });
 
   // ---------- 交互 ----------
-  const _cur = ctrls.querySelector('[data-cur-method]');
-  const _exp = ctrls.querySelector('[data-explainer]');
-  function setMethod(m) {
-    method = m;
-    _cur.textContent = m;
-    _exp.textContent = METHODS[m].desc;
-    // 按钮高亮
-    ctrls.querySelectorAll('button[data-method]').forEach(b => {
-      b.style.background = b.dataset.method === m ? '#fbbf24' : '';
-      b.style.color = b.dataset.method === m ? '#0e1116' : '';
-    });
+  // 拖动 DEF 顶点
+  function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
-  ctrls.querySelectorAll('button[data-method]').forEach(b => {
-    b.addEventListener('click', () => setMethod(b.dataset.method));
+  function hitTest(p) {
+    for (let i = 0; i < 3; i++) {
+      if (Math.hypot(tri2[i].x - p.x, tri2[i].y - p.y) < 14) return i;
+    }
+    return -1;
+  }
+  canvas.addEventListener('mousedown', (e) => {
+    const p = getMousePos(e);
+    const idx = hitTest(p);
+    if (idx >= 0) drag = { idx };
   });
-  setMethod('SSS');
+  window.addEventListener('mousemove', (e) => {
+    if (!drag) return;
+    const p = getMousePos(e);
+    tri2[drag.idx] = p;
+  });
+  window.addEventListener('mouseup', () => { drag = null; });
+
+  const critSel = ctrls.querySelector('[data-crit]');
+  critSel.addEventListener('change', (e) => { params.crit = e.target.value; });
+
+  function randomTri(target) {
+    const { w, h } = { w: canvas.clientWidth, h: canvas.clientHeight };
+    // 随机三角形(保证不共线,合理大小)
+    const cx = target === tri1 ? w * 0.25 : w * 0.75;
+    const cy = h * 0.5;
+    const r = () => 0.3 + Math.random() * 0.7;
+    target[0] = { x: cx + (Math.random() - 0.5) * 200, y: cy + (Math.random() - 0.5) * 150 };
+    target[1] = { x: cx + (Math.random() - 0.5) * 200, y: cy + (Math.random() - 0.5) * 150 };
+    target[2] = { x: cx + (Math.random() - 0.5) * 200, y: cy + (Math.random() - 0.5) * 150 };
+  }
+  function resetTri1() {
+    const { w, h } = { w: canvas.clientWidth, h: canvas.clientHeight };
+    initTriangles(w, h);
+  }
+  function copyT1toT2() {
+    const dx = (canvas.clientWidth / 2);
+    const dy = 0;
+    tri2 = [
+      { x: tri1[0].x + dx, y: tri1[0].y + dy },
+      { x: tri1[1].x + dx, y: tri1[1].y + dy },
+      { x: tri1[2].x + dx, y: tri1[2].y + dy },
+    ];
+  }
+
+  ctrls.querySelector('[data-rand1]').addEventListener('click', () => randomTri(tri1));
+  ctrls.querySelector('[data-rand2]').addEventListener('click', () => randomTri(tri2));
+  ctrls.querySelector('[data-rst1]').addEventListener('click', () => resetTri1());
+  ctrls.querySelector('[data-cp]').addEventListener('click', () => copyT1toT2());
 
   return {
     sceneId: 'triangle-congruence',
-    getFormula() {
-      return METHODS[method].desc;
-    },
+    getFormula() { return 'ΔABC ≅ ΔDEF via SSS / SAS / ASA / AAS / HL'; },
     getLesson() {
       const c = lesson.querySelector('.mathw-lesson-content');
       return c ? c.textContent.replace(/\s+/g, ' ').trim() : '';
     },
-    getState() { return { method }; },
+    getState() { return { crit: params.crit }; },
     setState(s) {
-      if (s && METHODS[s.method]) setMethod(s.method);
+      if (!s) return;
+      if (s.crit) { params.crit = s.crit; critSel.value = s.crit; }
     },
     destroy() {
       loop.stop();

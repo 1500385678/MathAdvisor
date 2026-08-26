@@ -1,0 +1,106 @@
+  [GET] /?scene=crystal-lattice&v=0.6.35&noai=1&forcewebglfail=1
+  [GET] /viewer/viewer.css
+  [GET] /viewer/viewer.js?v=0.6.3
+  [GET] /kernel/03_llm-client.js?v=0.6.3
+  [GET] /db/02_workspace.js?v=0.6.3
+  [GET] /mock/01_llm-mock.js?v=0.6.3
+  [GET] /viewer/02_ai-panel.js
+  [GET] /db/01_indexeddb.js
+  [GET] /mock/01_llm-mock.js
+  [GET] /viewer/scenes/30_crystal-lattice.js
+  [GET] /vendor/three/build/three.module.js
+  [GET] /vendor/three/examples/jsm/controls/OrbitControls.js
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 60707)
+Traceback (most recent call last):
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "D:\Mac\Mac\Mac\Consultant\14-数学-Mathematics\_MathematicsLib\MathematicsWeb\server.py", line 58, in __init__
+    super().__init__(*args, directory=str(ROOT), **kwargs)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 672, in __init__
+    super().__init__(*args, **kwargs)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 404, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+----------------------------------------
+  [GET] /api/health
+  [GET] /?scene=crystal-lattice&v=0.6.35&noai=1&forcewebglfail=1
+  [GET] /viewer/viewer.css
+  [GET] /viewer/viewer.js?v=0.6.3
+  [GET] /db/02_workspace.js?v=0.6.3
+  [GET] /kernel/03_llm-client.js?v=0.6.3
+  [GET] /mock/01_llm-mock.js?v=0.6.3
+  [GET] /viewer/02_ai-panel.js
+  [GET] /db/01_indexeddb.js
+  [GET] /mock/01_llm-mock.js
+  [GET] /viewer/scenes/30_crystal-lattice.js
+  [GET] /vendor/three/build/three.module.js
+  [GET] /vendor/three/examples/jsm/controls/OrbitControls.js
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 62438)
+Traceback (most recent call last):
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "D:\Mac\Mac\Mac\Consultant\14-数学-Mathematics\_MathematicsLib\MathematicsWeb\server.py", line 58, in __init__
+    super().__init__(*args, directory=str(ROOT), **kwargs)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 672, in __init__
+    super().__init__(*args, **kwargs)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 404, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+----------------------------------------
+  [GET] /?scene=crystal-lattice&v=0.6.35&noai=1&forcewebglfail=1
+  [GET] /viewer/viewer.css
+  [GET] /viewer/viewer.js?v=0.6.3
+  [GET] /db/02_workspace.js?v=0.6.3
+  [GET] /kernel/03_llm-client.js?v=0.6.3
+  [GET] /mock/01_llm-mock.js?v=0.6.3
+  [GET] /viewer/02_ai-panel.js
+  [GET] /db/01_indexeddb.js
+  [GET] /mock/01_llm-mock.js
+  [GET] /viewer/scenes/30_crystal-lattice.js
+  [GET] /vendor/three/build/three.module.js
+  [GET] /vendor/three/examples/jsm/controls/OrbitControls.js
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53160)
+Traceback (most recent call last):
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "D:\Mac\Mac\Mac\Consultant\14-数学-Mathematics\_MathematicsLib\MathematicsWeb\server.py", line 58, in __init__
+    super().__init__(*args, directory=str(ROOT), **kwargs)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 672, in __init__
+    super().__init__(*args, **kwargs)
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\http\server.py", line 404, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\yongzhang\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 720, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] 远程主机强迫关闭了一个现有的连接。
+----------------------------------------

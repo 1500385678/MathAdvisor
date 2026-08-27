@@ -365,6 +365,16 @@ export const SCENES = [
     description: 'PT² = PA·PB · 圆外切线² = 割线积。4 视图:切线+割线/双割线/相交弦/径向扫描。',
     loader: () => import('./scenes/38_power-of-point.js'),
   },
+  // v0.6.42: 高中解析几何场景集首批 1/2(MATH-017 1/6,人教版选择性必修第一册)
+  {
+    id: 'conic-unified',
+    title: '圆锥曲线统一定义',
+    domain: '数学 × 高中解析几何',
+    icon: '🎯',
+    renderer: '2D',
+    description: 'R = e·d · 一个公式串起三种曲线。3 视图:拖 e 变类型 / 三曲线同焦点叠对比 / 拖 d 缩放。',
+    loader: () => import('./scenes/39_conic-unified.js'),
+  },
 ];
 
 function escapeHtml(s) {

@@ -4,7 +4,7 @@
 
 ## 0. 项目是什么
 
-跨学科数学可视化教学平台,38 场景(2D+3D 双模)覆盖建筑/物理/音乐/生物/艺术/概率/机器学习/工程/初中几何 9 大领域。
+跨学科数学可视化教学平台,40 场景(2D+3D 双模)覆盖建筑/物理/音乐/生物/艺术/概率/机器学习/工程/初中几何/高中解析几何 10 大领域。
 
 | 维度 | 值 |
 |---|---|
@@ -18,10 +18,10 @@
 
 ## 状态速览(动态,agent 自动维护)
 
-- **版本**:v0.6.42 · **进度**:39/39 场景 + 28/28 教学要点 + WebGL 降级 + MATH-017 1/6
+- **版本**:v0.6.43 · **进度**:40/40 场景 + 29/29 教学要点 + WebGL 降级 + MATH-017 2/6
 - **远端**:GitHub + Gitee(同步)
 - **当前活跃任务**(见 `PLAN.md`):
-  - MATH-017 [~] **🚀 2026-08-27 启动**:高中解析几何场景集(6 场景:conic-unified + ellipse-analytic + hyperbola-analytic + parabola-analytic + parametric-curves + polar-rose,人教版选择性必修第一册,沿 MATH-016 节奏分批做)
+  - MATH-017 [~] **🚀 2026-08-27 启动**:高中解析几何场景集(6 场景:conic-unified ✅ + ellipse-analytic ✅ + hyperbola-analytic + parabola-analytic + parametric-curves + polar-rose,人教版选择性必修第一册,沿 MATH-016 节奏分批做)
   - MATH-015 [~] 接 M3 LLM,等 user 配 M3_API_KEY
   - MATH-016 ✅ 完成 8/8(triangle-congruence + pythagorean-theorem + inscribed-angle + similar-triangles + polygon-interior-angles + quadrilateral-family + three-views-3d + power-of-point)
   - MATH-005/006/007 [ ]
@@ -92,6 +92,7 @@ MathematicsWeb/
 │       ├── 36_quadrilateral-family.js  # 四边形家族(2D · 初中几何 7 年级)
 │       └── 38_power-of-point.js       # 圆幂定理 PT² = PA·PB(2D · 初中几何 8 年级)
 │       └── 39_conic-unified.js        # 圆锥曲线统一定义 R=ed(2D · 高中解析几何 选修1)
+│       └── 40_ellipse-analytic.js    # 椭圆解析几何 x²/a²+y²/b²=1(2D · 高中解析几何 选修1)
 ├── kernel/                     # 数学/动画/LLM 客户端
 │   ├── 01_math-core.js         # 数学原语(Complex/Vec2/Mat2x2/catenary/DFT/Mandelbrot/LV)
 │   ├── 02_animation.js         # rAF 循环 + Canvas 高 DPI 自适应
@@ -241,6 +242,7 @@ MathematicsWeb/
 - 2026-08-26 v0.6.40: 初中几何场景集收官 1 个(MATH-016 8/8 全部完成)· power-of-point(圆幂定理:PT²=PA·PB+双割线等积+相交弦+径向扫描 4 视图 + Apollonius ~200BC)
 - 2026-08-27 v0.6.41: **MATH-017 高中解析几何场景集启动**(6 场景,人教版选择性必修第一册)· 候选 39 conic-unified(王炸 R=ed) + 40 ellipse-analytic + 41 hyperbola-analytic + 42 parabola-analytic + 43 parametric-curves + 44 polar-rose · 沿 MATH-016 节奏分 3 批做(每批 2 场景:42/43/44)· **0 场景落地**(纯启动,代码层场景留给 T1-T5)· P0 任务切换:MATH-016(8/8 收官)→ MATH-017
 - 2026-08-28 v0.6.42: **MATH-017 首批 1/2** · 39 conic-unified(王炸,圆锥曲线统一定义 R=ed + 极坐标 r=ed/(1+e·cosθ),e<1 椭圆/e=1 抛物线/e>1 双曲线)· 3 视图:basic 拖 e 变类型 / compare 三曲线 e=0.5/1/1.5 同焦点叠对比 / drag-d 固定 e 拖 d 缩放· 动点 P 实时验证 R=ed 等式(高亮黄/红颜色区分)· Apollonius ~200BC《Conics》8 卷历史+开普勒/抛物天线/LORAN 应用
+- 2026-08-29 v0.6.43: **MATH-017 首批 2/2** · 40 ellipse-analytic(椭圆解析几何 x²/a²+y²/b²=1 + 第一定义 PF₁+PF₂=2a + 第二定义 PF=e·Pd 与 39 等价 + 参数方程 x=a·cosθ, y=b·sinθ 单位圆缩放 + 离心率 e=c/a)· 3 视图:basic 拖 a/b 改形状 + 动点验证 PF₁+PF₂=2a / parametric 单位圆映射 + 切线 / e-mode 拖 e 看从圆到扁 + 4 预设(圆/地球 e=0.017/水星 e=0.206/冥王星 e=0.249)· 历史:1609 开普勒第一定律 + 1687 牛顿万有引力证明 + 1809 高斯谷神星轨道(首批椭圆计算)· 应用:行星轨道 + 反射望远镜(见 23)+ 体外冲击波碎石 + 半椭圆拱
 
 ### 6.7 风险(关注)
 
@@ -314,6 +316,7 @@ AI 提问时,`AIPanel._buildSceneContext()` 读 `instance.getFormula()` + `insta
 - [x] **v0.6.40 (2026-08-26)**: 38 场景 + 27/27 教学要点 + 初中几何 8 场景全部完成(MATH-016 8/8)· 收官场景 power-of-point(圆幂定理)
 - [~] **v0.6.41 (2026-08-27)**: **MATH-017 高中解析几何场景集启动**(6 场景,人教版选择性必修第一册)· P0 任务切换 MATH-016→MATH-017 · 0 场景落地(纯启动,代码层场景留给后续 3 批 v0.6.42/.43/.44)
 - [~] **v0.6.42 (2026-08-28)**: **MATH-017 首批 1/2** · 39 conic-unified(王炸,圆锥曲线统一定义 R=ed)· 进度 1/6
+- [~] **v0.6.43 (2026-08-29)**: **MATH-017 首批 2/2** · 40 ellipse-analytic(椭圆解析几何 x²/a²+y²/b²=1)· 进度 2/6
 - [ ] **v1.0**: 全套主题模块 + 教师模式 + 用户账号
 
 ## 9. 已知 TODO

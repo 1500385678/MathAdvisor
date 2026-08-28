@@ -375,6 +375,16 @@ export const SCENES = [
     description: 'R = e·d · 一个公式串起三种曲线。3 视图:拖 e 变类型 / 三曲线同焦点叠对比 / 拖 d 缩放。',
     loader: () => import('./scenes/39_conic-unified.js'),
   },
+  // v0.6.43: 高中解析几何场景集首批 2/2(MATH-017 2/6,人教版选择性必修第一册)
+  {
+    id: 'ellipse-analytic',
+    title: '椭圆解析几何',
+    domain: '数学 × 高中解析几何',
+    icon: '🥚',
+    renderer: '2D',
+    description: 'x²/a² + y²/b² = 1 · 第一定义 PF₁+PF₂=2a。3 视图:拖 a/b 改形状 / 参数方程单位圆缩放 / 离心率 e 模式(地球 0.017 / 水星 0.206 / 冥王星 0.249)。',
+    loader: () => import('./scenes/40_ellipse-analytic.js'),
+  },
 ];
 
 function escapeHtml(s) {

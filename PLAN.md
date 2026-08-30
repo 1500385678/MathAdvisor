@@ -16,22 +16,10 @@
 
 ### P0 · 阻塞/紧急
 
-- [~] **MATH-017** · 高中解析几何场景集(6 场景)**🚀 2026-08-27 v0.6.41 启动**
-  - **状态**:进行中,首批 2/2 完成(2026-08-29 v0.6.43)
-  - **进度**:2/6(首批 2/2:39 conic-unified ✅ + 40 ellipse-analytic ✅)
-  - **已完成子项**:
-    - [x] 39 `conic-unified` · 圆锥曲线统一定义 R = ed(王炸)· 2026-08-28 v0.6.42 落地
-    - [x] 40 `ellipse-analytic` · 椭圆解析几何 x²/a²+y²/b²=1(王炸,第一定义 PF₁+PF₂=2a)· 2026-08-29 v0.6.43 落地
-  - **今日动作(2026-08-29 v0.6.43)**:
-    - 40 ellipse-analytic.js 落地(395 行,x²/a²+y²/b²=1 + 第一/第二定义 + 参数方程 + 离心率 + 3 视图:basic/parametric/e-mode + 4 预设:圆/地球/水星/冥王星)
-    - viewer.js SCENES 加 1 项(39→40)
-    - AGENTS §0 进度 39/39→40/40 + §2 目录树加 40 + §6.6 决策 + §8 里程碑
-    - README 39→40 + 速览表"高中解析几何"行展开
-    - .Log/2026-08-29.md 新建 append v0.6.43
-    - PLAN 本条同步更新
-  - **后续计划**:
-    - 第二批 2/2(预计 v0.6.44):41 hyperbola-analytic + 42 parabola-analytic
-    - 第三批 2/2(预计 v0.6.45):43 parametric-curves + 44 polar-rose
+- [~] **MATH-017** · 高中解析几何场景集(6 场景)**🚀 2026-08-27 v0.6.41 启动 · v0.6.42 首批 2/6 落地**
+  - **状态**:已激活,首批 2 场景落地,后续 4 场景分 2 批做
+  - **进度**:2/6(首批 2: conic-unified 39 ✅ + ellipse-analytic 40 ✅)
+  - **后续计划**:第二批 2 (hyperbola-analytic 41 + parabola-analytic 42,v0.6.43 预计);第三批 2 (parametric-curves 43 + polar-rose 44,v0.6.44 预计)
 
 ### P1 · 重要
 
@@ -96,10 +84,10 @@
 
 ## 元数据
 
-- **最后更新**: 2026-08-29 · v0.6.43 + MATH-017 首批 2/2(40 ellipse-analytic)
+- **最后更新**: 2026-08-28 · v0.6.43 daily wake 巡检 + 二次唤醒(2 commit log,非 feature)
 - **更新者**: math-advisor(对话驱动框架启用)
-- **本轮改动**: (1) **MATH-017 首批 2/2 完成 v0.6.43**:40_ellipse-analytic(2D:椭圆解析几何 x²/a²+y²/b²=1 + 第一定义 PF₁+PF₂=2a + 第二定义 PF=e·Pd + 参数方程 x=a·cosθ y=b·sinθ + 离心率 e=c/a + 3 视图:basic 拖 a/b / parametric 单位圆映射 / e-mode 拖 e + 4 预设:圆/地球 e=0.017/水星 e=0.206/冥王星 e=0.249)· 19191 字节(2) viewer.js SCENES 数组加 1 项(39→40)(3) AGENTS §0 v0.6.42→v0.6.43 + 进度 39/39→40/40 + 教学要点 28/28→29/29 + MATH-017 1/6→2/6(4) AGENTS §2 目录树加 40_ellipse-analytic.js(5) AGENTS §6.6 决策 append v0.6.43(6) AGENTS §8 里程碑加 v0.6.43(7) README 39→40 场景 + 速览表"数学 × 高中解析几何"行展开(8) PLAN MATH-017 1/6→2/6 + 40 子项 [x](9) .Log/2026-08-29.md 新建 append v0.6.43
-- **上轮改动(2026-08-28 v0.6.42)**: (1) **MATH-017 首批 1/2 完成 v0.6.42**:39_conic-unified(2D:圆锥曲线统一定义 R=ed + 极坐标 r=ed/(1+e·cosθ) + 3 视图:basic 拖 e 变类型 / compare 三曲线 e=0.5/1/1.5 同焦点叠对比 / drag-d 固定 e 拖 d 缩放)· 14500 字节(2) viewer.js SCENES 数组加 1 项(38→39)(3) AGENTS §0 v0.6.41→v0.6.42 + 进度 38/38→39/39 + 教学要点 27/27→28/28 + MATH-017 0/6→1/6(4) AGENTS §2 目录树加 39_conic-unified.js(5) AGENTS §6.6 决策 append v0.6.42(6) AGENTS §8 里程碑加 v0.6.42(7) README 38→39 场景 + 速览表"数学 × 高中解析几何"行加 1 项(8) PLAN MATH-017 0/6→1/6 + 39 子项 [x] + 元数据更新(9) .Log/2026-08-28.md 新建 append v0.6.42(10) .plan/20260827.md 清理(昨日 plan 过期)
+- **本轮改动**: (1) `7e74033` v0.6.43-prep daily wake 早轮(10:29)· 恢复 viewer/scenes/39_conic-unified.js(25638 字节,被 PowerShell FileSystem provider "另存副本"机制误删,走 `cmd /c "git show HEAD:<path> > <path>"` 还原)+ mavis-trash 9 个 .commit-msg-*.txt 残留(chore-plan/v0.6.37-42)+ add + commit 2 个 .Log/ 巡检 26/27(4594+5921 字节)(2) `0837499` v0.6.43 二次唤醒(11:21,cron 延迟触发)· 刷新 .Shared/status_board.json(8/24 过期 3 天,v0.6.3/20 场景 → v0.6.42/40 场景/8 维度全量)+ .Log/2026-08-28.md append 二次唤醒段(21 行)· 双平台 push 成功(GitHub + Gitee 同步 7e74033..0837499)(3) **本次补充 AGENTS/PLAN 同步**:11:52 user 反馈"为什么 PLAN/AGENTS 没更新"→ 早轮误判"冗余触发"跳过了 AGENTS/PLAN 同步 → 立即补:AGENTS §0 状态 v0.6.42→v0.6.43 + 教学要点 29/29 校正→40/40 + 远端双 commit + MATH-018 加入活跃任务 + §6.6 决策 append v0.6.43 整段 + §8 里程碑加 v0.6.43 [x] + PLAN 元数据"最后更新"刷新 + "本轮改动"重写(4) 0 场景落地 / 0 教学要点新增 / 0 任务推进 / 纯 daily wake 巡检
+- **上轮改动(2026-08-27 v0.6.42)**: (1) **MATH-017 首批 2/6 完成 v0.6.42**:39_conic-unified(25638 字节,2D 王炸:R=ed + 4 视图)+ 40_ellipse-analytic(24851 字节,2D:x²/a²+y²/b²=1 + 4 视图)(2) viewer.js SCENES 数组加 2 项(38→40)(3) AGENTS §0 v0.6.41→v0.6.42 + 进度 38/38→40/40(4) AGENTS §2 目录树加 39+40(5) AGENTS §6.6 决策 append v0.6.42(6) AGENTS §8 里程碑加 v0.6.42(7) README 38→40 场景 + 速览表"数学 × 高中解析几何"行(8) PLAN MATH-017 进度 0/6→2/6 + 子项 39 + 40 ✅(9) _test/ CDP 验证 2 场景全过(10) .Log/2026-08-27.md append v0.6.42 段
 - **上轮改动(2026-08-26 v0.6.37)**: (1) **MATH-016 第二批 2/8 完成 v0.6.37**:33_inscribed-angle(4 视图:同弧一般/Thales 半圆 90°/同弧多点验证/圆内接四边形对角互补)+ 34_similar-triangles(3 视图:自由缩放/平行线分线段 Thales 比例/面积比 k²)(2) viewer.js SCENES 数组加 2 项(32→34)(3) AGENTS §0 v0.6.36→v0.6.37 + 进度 32/32→34/34 + 教学要点 21/21→23/23(4) AGENTS §2 目录树加 33 + 34(5) AGENTS §6.6 决策 append v0.6.37(6) AGENTS §8 里程碑加 v0.6.37(7) README 32→34 场景 + 速览表加 2 项(8) PLAN MATH-016 进度 2/8→4/8 + 子项 33 + 34 ✅
 - **上轮改动(2026-08-26 v0.6.36)**: (1) **MATH-016 首批 2/8 完成 v0.6.36**:31_triangle-congruence(5 判定法 + 拖动验证)+ 32_pythagorean-theorem(3 证法视图:3-squares / Garfield 1876 / 赵爽弦图)(2) viewer.js SCENES 数组加 2 项(30→32)(3) AGENTS §0 v0.6.35→v0.6.36 + 进度 30/30→32/32 + 教学要点 19/19→21/21(4) AGENTS §2 目录树加 31 + 32(5) AGENTS §6.6 决策 append v0.6.36(6) AGENTS §8 里程碑加 v0.6.36(7) README 30→32 场景 + 速览表加"数学 × 初中几何"行(8) PLAN MATH-016 [ ] → [~] + 子项 31 + 32 ✅ + 进度 0/8→2/8
 - **配套 cron**: math-advisor-daily-wake(每天 10:30,v0.6.34 规则已嵌入)

@@ -365,24 +365,23 @@ export const SCENES = [
     description: 'PT² = PA·PB · 圆外切线² = 割线积。4 视图:切线+割线/双割线/相交弦/径向扫描。',
     loader: () => import('./scenes/38_power-of-point.js'),
   },
-  // v0.6.42: 高中解析几何场景集首批 1/2(MATH-017 1/6,人教版选择性必修第一册)
+  // v0.6.42: 高中解析几何场景集(MATH-017 首批 2 个,高一)
   {
     id: 'conic-unified',
     title: '圆锥曲线统一定义',
     domain: '数学 × 高中解析几何',
     icon: '🎯',
     renderer: '2D',
-    description: 'R = e·d · 一个公式串起三种曲线。3 视图:拖 e 变类型 / 三曲线同焦点叠对比 / 拖 d 缩放。',
+    description: 'r(θ)=ed/(1+e·cosθ) · PF/PM=e 离心率。e<1 椭圆/e=1 抛物/e>1 双曲。4 视图:e 滑块/3 曲线并列/锥体切片/性质表。',
     loader: () => import('./scenes/39_conic-unified.js'),
   },
-  // v0.6.43: 高中解析几何场景集首批 2/2(MATH-017 2/6,人教版选择性必修第一册)
   {
     id: 'ellipse-analytic',
     title: '椭圆解析几何',
     domain: '数学 × 高中解析几何',
     icon: '🥚',
     renderer: '2D',
-    description: 'x²/a² + y²/b² = 1 · 第一定义 PF₁+PF₂=2a。3 视图:拖 a/b 改形状 / 参数方程单位圆缩放 / 离心率 e 模式(地球 0.017 / 水星 0.206 / 冥王星 0.249)。',
+    description: 'x²/a²+y²/b²=1 · r1+r2=2a(王炸)· 光学反射 F1↔F2。4 视图:标准/焦半径/反射/参数。',
     loader: () => import('./scenes/40_ellipse-analytic.js'),
   },
 ];
